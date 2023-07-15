@@ -430,8 +430,8 @@ void main(){
             mouse.x && mouse.x >= rect.left && mouse.x <= rect.right &&
             mouse.y && mouse.y >= rect.top && mouse.y <= rect.bottom) {
 
-            let mouse_x = (mouse.x - rect.left ) * this.realToCSSPixels;
-            let mouse_y = (this.canvas.height - (mouse.y - rect.top) * this.realToCSSPixels);
+            let mouse_x = (mouse.x - rect.left );
+            let mouse_y = (rect.height - (mouse.y - rect.top));
 
             this.uniform('2f', 'vec2', 'u_mouse', mouse_x, mouse_y);
         }

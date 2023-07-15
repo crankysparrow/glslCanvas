@@ -653,8 +653,6 @@ function subscribeMixin$1(target) {
 }
 
 // Texture management
-// GL texture wrapper object for keeping track of a global set of textures, keyed by a unique user-defined name
-
 var Texture = function () {
     function Texture(gl, name) {
         var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
@@ -957,6 +955,9 @@ var Texture = function () {
     }]);
     return Texture;
 }();
+
+// Report max texture size for a GL context
+
 
 Texture.getMaxTextureSize = function (gl) {
     return gl.getParameter(gl.MAX_TEXTURE_SIZE);
@@ -1371,8 +1372,8 @@ var GlslCanvas = function () {
             var rect = this.canvas.getBoundingClientRect();
             if (mouse && mouse.x && mouse.x >= rect.left && mouse.x <= rect.right && mouse.y && mouse.y >= rect.top && mouse.y <= rect.bottom) {
 
-                var mouse_x = (mouse.x - rect.left) * this.realToCSSPixels;
-                var mouse_y = this.canvas.height - (mouse.y - rect.top) * this.realToCSSPixels;
+                var mouse_x = mouse.x - rect.left;
+                var mouse_y = rect.height - (mouse.y - rect.top);
 
                 this.uniform('2f', 'vec2', 'u_mouse', mouse_x, mouse_y);
             }

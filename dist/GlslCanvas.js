@@ -12,7 +12,7 @@ if (typeof window !== "undefined") {
     win = window;
 } else if (typeof commonjsGlobal !== "undefined") {
     win = commonjsGlobal;
-} else if (typeof self !== "undefined"){
+} else if (typeof self !== "undefined") {
     win = self;
 } else {
     win = {};
@@ -24,31 +24,25 @@ var isFunction_1 = isFunction;
 
 var toString = Object.prototype.toString;
 
-function isFunction (fn) {
+function isFunction(fn) {
   if (!fn) {
-    return false
+    return false;
   }
   var string = toString.call(fn);
-  return string === '[object Function]' ||
-    (typeof fn === 'function' && string !== '[object RegExp]') ||
-    (typeof window !== 'undefined' &&
-     // IE8 and below
-     (fn === window.setTimeout ||
-      fn === window.alert ||
-      fn === window.confirm ||
-      fn === window.prompt))
+  return string === '[object Function]' || typeof fn === 'function' && string !== '[object RegExp]' || typeof window !== 'undefined' && (
+  // IE8 and below
+  fn === window.setTimeout || fn === window.alert || fn === window.confirm || fn === window.prompt);
 }
 
-var trim = function(string) {
+var trim = function trim(string) {
   return string.replace(/^\s+|\s+$/g, '');
 };
-var isArray = function(arg) {
-      return Object.prototype.toString.call(arg) === '[object Array]';
-    };
+var isArray = function isArray(arg) {
+  return Object.prototype.toString.call(arg) === '[object Array]';
+};
 
-var parseHeaders = function (headers) {
-  if (!headers)
-    return {}
+var parseHeaders = function parseHeaders(headers) {
+  if (!headers) return {};
 
   var result = {};
 
@@ -56,20 +50,20 @@ var parseHeaders = function (headers) {
 
   for (var i = 0; i < headersArr.length; i++) {
     var row = headersArr[i];
-    var index = row.indexOf(':')
-    , key = trim(row.slice(0, index)).toLowerCase()
-    , value = trim(row.slice(index + 1));
+    var index = row.indexOf(':'),
+        key = trim(row.slice(0, index)).toLowerCase(),
+        value = trim(row.slice(index + 1));
 
-    if (typeof(result[key]) === 'undefined') {
+    if (typeof result[key] === 'undefined') {
       result[key] = value;
     } else if (isArray(result[key])) {
       result[key].push(value);
     } else {
-      result[key] = [ result[key], value ];
+      result[key] = [result[key], value];
     }
   }
 
-  return result
+  return result;
 };
 
 var immutable = extend;
@@ -89,26 +83,22 @@ function extend() {
         }
     }
 
-    return target
+    return target;
 }
 
 "use strict";
-
-
-
-
 
 var xhr = createXHR;
 // Allow use of default import syntax in TypeScript
 var default_1 = createXHR;
 createXHR.XMLHttpRequest = window_1.XMLHttpRequest || noop;
-createXHR.XDomainRequest = "withCredentials" in (new createXHR.XMLHttpRequest()) ? createXHR.XMLHttpRequest : window_1.XDomainRequest;
+createXHR.XDomainRequest = "withCredentials" in new createXHR.XMLHttpRequest() ? createXHR.XMLHttpRequest : window_1.XDomainRequest;
 
-forEachArray(["get", "put", "post", "patch", "head", "delete"], function(method) {
-    createXHR[method === "delete" ? "del" : method] = function(uri, options, callback) {
+forEachArray(["get", "put", "post", "patch", "head", "delete"], function (method) {
+    createXHR[method === "delete" ? "del" : method] = function (uri, options, callback) {
         options = initParams(uri, options, callback);
         options.method = method.toUpperCase();
-        return _createXHR(options)
+        return _createXHR(options);
     };
 });
 
@@ -118,11 +108,11 @@ function forEachArray(array, iterator) {
     }
 }
 
-function isEmpty(obj){
-    for(var i in obj){
-        if(obj.hasOwnProperty(i)) return false
+function isEmpty(obj) {
+    for (var i in obj) {
+        if (obj.hasOwnProperty(i)) return false;
     }
-    return true
+    return true;
 }
 
 function initParams(uri, options, callback) {
@@ -131,29 +121,29 @@ function initParams(uri, options, callback) {
     if (isFunction_1(options)) {
         callback = options;
         if (typeof uri === "string") {
-            params = {uri:uri};
+            params = { uri: uri };
         }
     } else {
-        params = immutable(options, {uri: uri});
+        params = immutable(options, { uri: uri });
     }
 
     params.callback = callback;
-    return params
+    return params;
 }
 
 function createXHR(uri, options, callback) {
     options = initParams(uri, options, callback);
-    return _createXHR(options)
+    return _createXHR(options);
 }
 
 function _createXHR(options) {
-    if(typeof options.callback === "undefined"){
-        throw new Error("callback argument missing")
+    if (typeof options.callback === "undefined") {
+        throw new Error("callback argument missing");
     }
 
     var called = false;
-    var callback = function cbOnce(err, response, body){
-        if(!called){
+    var callback = function cbOnce(err, response, body) {
+        if (!called) {
             called = true;
             options.callback(err, response, body);
         }
@@ -181,33 +171,33 @@ function _createXHR(options) {
             } catch (e) {}
         }
 
-        return body
+        return body;
     }
 
     function errorFunc(evt) {
         clearTimeout(timeoutTimer);
-        if(!(evt instanceof Error)){
-            evt = new Error("" + (evt || "Unknown XMLHttpRequest Error") );
+        if (!(evt instanceof Error)) {
+            evt = new Error("" + (evt || "Unknown XMLHttpRequest Error"));
         }
         evt.statusCode = 0;
-        return callback(evt, failureResponse)
+        return callback(evt, failureResponse);
     }
 
     // will load the data & process the response in a special response object
     function loadFunc() {
-        if (aborted) return
+        if (aborted) return;
         var status;
         clearTimeout(timeoutTimer);
-        if(options.useXDR && xhr.status===undefined) {
+        if (options.useXDR && xhr.status === undefined) {
             //IE8 CORS GET successful response doesn't have a status field, but body is fine
             status = 200;
         } else {
-            status = (xhr.status === 1223 ? 204 : xhr.status);
+            status = xhr.status === 1223 ? 204 : xhr.status;
         }
         var response = failureResponse;
         var err = null;
 
-        if (status !== 0){
+        if (status !== 0) {
             response = {
                 body: getBody(),
                 statusCode: status,
@@ -216,13 +206,14 @@ function _createXHR(options) {
                 url: uri,
                 rawRequest: xhr
             };
-            if(xhr.getAllResponseHeaders){ //remember xhr can in fact be XDR for CORS in IE
+            if (xhr.getAllResponseHeaders) {
+                //remember xhr can in fact be XDR for CORS in IE
                 response.headers = parseHeaders(xhr.getAllResponseHeaders());
             }
         } else {
             err = new Error("Internal XMLHttpRequest Error");
         }
-        return callback(err, response, response.body)
+        return callback(err, response, response.body);
     }
 
     var xhr = options.xhr || null;
@@ -230,7 +221,7 @@ function _createXHR(options) {
     if (!xhr) {
         if (options.cors || options.useXDR) {
             xhr = new createXHR.XDomainRequest();
-        }else{
+        } else {
             xhr = new createXHR.XMLHttpRequest();
         }
     }
@@ -269,46 +260,44 @@ function _createXHR(options) {
     xhr.onprogress = function () {
         // IE must die
     };
-    xhr.onabort = function(){
+    xhr.onabort = function () {
         aborted = true;
     };
     xhr.ontimeout = errorFunc;
     xhr.open(method, uri, !sync, options.username, options.password);
     //has to be after open
-    if(!sync) {
+    if (!sync) {
         xhr.withCredentials = !!options.withCredentials;
     }
     // Cannot set timeout with sync request
     // not setting timeout on the xhr object, because of old webkits etc. not handling that correctly
     // both npm's request and jquery 1.x use this kind of timeout, so this is being consistent
-    if (!sync && options.timeout > 0 ) {
-        timeoutTimer = setTimeout(function(){
-            if (aborted) return
-            aborted = true;//IE9 may still call readystatechange
+    if (!sync && options.timeout > 0) {
+        timeoutTimer = setTimeout(function () {
+            if (aborted) return;
+            aborted = true; //IE9 may still call readystatechange
             xhr.abort("timeout");
             var e = new Error("XMLHttpRequest timeout");
             e.code = "ETIMEDOUT";
             errorFunc(e);
-        }, options.timeout );
+        }, options.timeout);
     }
 
     if (xhr.setRequestHeader) {
-        for(key in headers){
-            if(headers.hasOwnProperty(key)){
+        for (key in headers) {
+            if (headers.hasOwnProperty(key)) {
                 xhr.setRequestHeader(key, headers[key]);
             }
         }
     } else if (options.headers && !isEmpty(options.headers)) {
-        throw new Error("Headers cannot be set on an XDomainRequest object")
+        throw new Error("Headers cannot be set on an XDomainRequest object");
     }
 
     if ("responseType" in options) {
         xhr.responseType = options.responseType;
     }
 
-    if ("beforeSend" in options &&
-        typeof options.beforeSend === "function"
-    ) {
+    if ("beforeSend" in options && typeof options.beforeSend === "function") {
         options.beforeSend(xhr);
     }
 
@@ -317,9 +306,7 @@ function _createXHR(options) {
     // See https://github.com/naugtur/xhr/issues/100.
     xhr.send(body || null);
 
-    return xhr
-
-
+    return xhr;
 }
 
 function getXml(xhr) {
@@ -327,15 +314,15 @@ function getXml(xhr) {
     // See https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseXML.
     try {
         if (xhr.responseType === "document") {
-            return xhr.responseXML
+            return xhr.responseXML;
         }
         var firefoxBugTakenEffect = xhr.responseXML && xhr.responseXML.documentElement.nodeName === "parsererror";
         if (xhr.responseType === "" && !firefoxBugTakenEffect) {
-            return xhr.responseXML
+            return xhr.responseXML;
         }
     } catch (e) {}
 
-    return null
+    return null;
 }
 
 function noop() {}
@@ -995,8 +982,6 @@ function subscribeMixin$1(target) {
 }
 
 // Texture management
-// GL texture wrapper object for keeping track of a global set of textures, keyed by a unique user-defined name
-
 var Texture = function () {
     function Texture(gl, name) {
         var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
@@ -1299,6 +1284,9 @@ var Texture = function () {
     }]);
     return Texture;
 }();
+
+// Report max texture size for a GL context
+
 
 Texture.getMaxTextureSize = function (gl) {
     return gl.getParameter(gl.MAX_TEXTURE_SIZE);
@@ -1713,8 +1701,8 @@ var GlslCanvas = function () {
             var rect = this.canvas.getBoundingClientRect();
             if (mouse && mouse.x && mouse.x >= rect.left && mouse.x <= rect.right && mouse.y && mouse.y >= rect.top && mouse.y <= rect.bottom) {
 
-                var mouse_x = (mouse.x - rect.left) * this.realToCSSPixels;
-                var mouse_y = this.canvas.height - (mouse.y - rect.top) * this.realToCSSPixels;
+                var mouse_x = mouse.x - rect.left;
+                var mouse_y = rect.height - (mouse.y - rect.top);
 
                 this.uniform('2f', 'vec2', 'u_mouse', mouse_x, mouse_y);
             }
